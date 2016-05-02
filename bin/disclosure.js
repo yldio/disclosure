@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
 var archy = require('archy')
-var chalk = require('chalk')
-
 var async = require('async')
 var charm = require('charm')()
 var pkg = require('../package.json')
@@ -32,6 +30,8 @@ var spinner = ora({
   color: 'yellow'
 })
 
+spinner.start()
+
 async.waterfall([
   // Get project package.json
   getPkg,
@@ -50,6 +50,6 @@ async.waterfall([
       .write(err.stack)
       .write('\n')
   } else {
-    charm.write(archy(deps.archyObj))
+    charm.write(archy(archyObj))
   }
 })
