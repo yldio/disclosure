@@ -37,7 +37,7 @@ async.waterfall([
   getPkg,
 
   // Get dependencies of project
-  getDeps(program.depth),
+  getDeps(parseInt(program.depth, 10)),
 
   parseDeps,
 
