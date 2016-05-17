@@ -1,22 +1,23 @@
 #!/usr/bin/env node
 
-var archy = require('archy')
 var async = require('async')
 var charm = require('charm')()
 var pkg = require('../package.json')
 var program = require('commander')
 var ora = require('ora')
+var localData = require('module-data').local
+var remoteData = require('module-data').remote
+var standardizeData = require('module-data/standardize')
+var getDepsSet = require('module-data/dependencies-set')
+var moduleRank = require('module-rank')
+var Table = require('cli-table2')
+var chalk = require('chalk')
 
-// Exec flow deps
-var getDeps = require('../lib/get-deps')
-var getPkg = require('../lib/get-pkg')
-var parseDeps = require('../lib/parse-deps')
-var rankDeps = require('../lib/rank-deps')
-
+// Parse args path
 // Describe program
 program
   .version(pkg.version)
-  .option('-d, --depth [depth]', 'Max display depth of the dependency tree')
+  .arguments('<path>')
   .parse(process.argv)
 
 // Handle stdout and clean terminal
@@ -32,24 +33,74 @@ var spinner = ora({
 
 spinner.start()
 
-async.waterfall([
-  // Get project package.json
-  getPkg,
-
-  // Get dependencies of project
-  getDeps(parseInt(program.depth, 10)),
-
-  parseDeps,
-
-  rankDeps
-], function (err, archyObj) {
-  spinner.stop()
-
+localData(process.cwd(), {depth: 0}, function (err, local) {
   if (err) {
-    charm
-      .write(err.stack)
-      .write('\n')
-  } else {
-    charm.write(archy(archyObj))
+    return console.log(err.stack)
   }
+
+  var depsSet = getDepsSet(local)
+  var queries = {}
+
+  Object.keys(depsSet).forEach(function (dep) {
+    queries[dep] = getData(dep, depsSet[dep][0])
+  })
+
+  return async.parallel(queries, handleRemoteData(local))
 })
+
+function handleRemoteData (local) {
+  return function (err, remote) {
+    spinner.stop()
+
+    if (err) {
+      return handleError(err)
+    }
+
+    var data = {
+      local: local,
+      remote: remote
+    }
+
+    return mergeData(data, displayData)
+  }
+}
+
+function handleError (err) {
+  charm
+    .write(err.stack)
+    .write('\n')
+}
+
+function mergeData (data, done) {
+  return standardizeData(data, function (err, standardData) {
+    if (err) {
+      return done(err)
+    }
+
+    return moduleRank(standardData, done)
+  })
+}
+
+function displayData (err, data) {
+  if (err) {
+    return handleError(err)
+  }
+
+  var table = new Table({
+    head: [
+      chalk.cyan('Module name'),
+      chalk.cyan('License'),
+      chalk.cyan('Reliability'),
+      chalk.cyan('Security'),
+      chalk.cyan('SLOC (Weight)')
+    ]
+  })
+
+  // TODO missing table.push
+}
+
+function getData (mdlName, version) {
+  return function (done) {
+    remoteData(mdlName, {version: version}, done)
+  }
+}
