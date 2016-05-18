@@ -119,7 +119,7 @@ function displayData (err, data) {
       colorLicense(data[dep].license, crit.license.score),
       colorPercentage(crit.reliability.score),
       colorPercentage(crit.security.score),
-      sloc + ' (' + parseFloat(((sloc * 100) / totalSloc).toFixed(2)) + ')',
+      sloc + ' (' + parseFloat(((sloc * 100) / totalSloc).toFixed(2)) + ' %)',
       colorPercentage(data[dep].score)
     ])
   })
@@ -141,15 +141,15 @@ function colorPercentage (num) {
   num *= 100
 
   if (num >= 0 && num <= 33) {
-    num = chalk.red(num + '%')
+    num = chalk.red(num + ' %')
   }
 
   if (num > 33 && num <= 66) {
-    num = chalk.yellow(num + '%')
+    num = chalk.yellow(num + ' %')
   }
 
   if (num > 66) {
-    num = chalk.green(num + '%')
+    num = chalk.green(num + ' %')
   }
 
   return num
