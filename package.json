@@ -15,7 +15,9 @@
     "charm": "^1.0.0",
     "cli-table2": "^0.2.0",
     "commander": "^2.9.0",
-    "ora": "^0.2.1"
+    "ora": "^0.2.1",
+    "module-data": "git@github.com:yldio/module-data.git",
+    "module-rank": "git@github.com:yldio/module-rank.git"
   },
   "license": "MIT",
   "devDependencies": {
