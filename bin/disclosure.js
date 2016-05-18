@@ -12,12 +12,18 @@ var getDepsSet = require('module-data/dependencies-set')
 var moduleRank = require('module-rank')
 var Table = require('cli-table2')
 var chalk = require('chalk')
+var path = require('path')
+
+var pathArg
 
 // Parse args path
 // Describe program
 program
   .version(pkg.version)
   .arguments('<path>')
+  .action(function (path) {
+    pathArg = path
+  })
   .parse(process.argv)
 
 // Handle stdout and clean terminal
@@ -33,9 +39,9 @@ var spinner = ora({
 
 spinner.start()
 
-localData(process.cwd(), {depth: 0}, function (err, local) {
+localData(path.resolve(pathArg), {depth: 0}, function (err, local) {
   if (err) {
-    return console.log(err.stack)
+    return handleError(err)
   }
 
   var depsSet = getDepsSet(local)
@@ -92,11 +98,61 @@ function displayData (err, data) {
       chalk.cyan('License'),
       chalk.cyan('Reliability'),
       chalk.cyan('Security'),
-      chalk.cyan('SLOC (Weight)')
+      chalk.cyan('SLOC (Weight)'),
+      chalk.cyan('Score')
     ]
   })
 
-  // TODO missing table.push
+  var depsKeys = Object.keys(data)
+  var totalSloc = 0
+
+  depsKeys.forEach(function (dep) {
+    totalSloc += data[dep].sloc.real
+  })
+
+  depsKeys.forEach(function (dep) {
+    var crit = data[dep].criteria
+    var sloc = data[dep].sloc.real
+
+    table.push([
+      [dep, data[dep].version].join('@'),
+      colorLicense(data[dep].license, crit.license.score),
+      colorPercentage(crit.reliability.score),
+      colorPercentage(crit.security.score),
+      sloc + ' (' + parseFloat(((sloc * 100) / totalSloc).toFixed(2)) + ')',
+      colorPercentage(data[dep].score)
+    ])
+  })
+
+  charm
+    .write(table.toString())
+    .write('\n')
+}
+
+function colorLicense (license, licenseScore) {
+  if (!licenseScore) {
+    return chalk.red(license)
+  }
+
+  return license
+}
+
+function colorPercentage (num) {
+  num *= 100
+
+  if (num >= 0 && num <= 33) {
+    num = chalk.red(num + '%')
+  }
+
+  if (num > 33 && num <= 66) {
+    num = chalk.yellow(num + '%')
+  }
+
+  if (num > 66) {
+    num = chalk.green(num + '%')
+  }
+
+  return num
 }
 
 function getData (mdlName, version) {
