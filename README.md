@@ -4,7 +4,7 @@
 ![demo](https://cloud.githubusercontent.com/assets/6867996/15426687/e20a768c-1e87-11e6-8e55-8eeb58eb0e5f.gif)
 ## Motivation
 
-The node.js culture is very active in creating and publishing modules for almost every imaginable need. Therefore, on average a node.js project has a lot more dependencies than a .NET or Java project. Managing those dependencies can become a nightmare real quick when the project has specific needs, such as legal or reliability. There is to much modules to approve, for vetting, to monitor, etc. We need a tool to give us an overview of the project's dependencies, so we may know what are we exposed to at a legal level, reliability level and overall risk.
+The Node.js culture is very active in creating and publishing modules for almost every imaginable need. On average, a Node.js project has a lot more dependencies than in projects with other technologies like .NET or Java. Managing those dependencies can become be overwhelming if the project has hard requirements in terms of reliability or legal. There are too many modules to approve, vetting, monitor, etc. This tool will give you an an overview of a project's dependencies, so you know what you are exposed to regarding licenses, reliability and overall risk.
 
 ## Installation
 ```bash
