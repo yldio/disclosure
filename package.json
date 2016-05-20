@@ -15,7 +15,8 @@
     "cli-table2": "^0.2.0",
     "commander": "^2.9.0",
     "module-data": "git@github.com:yldio/module-data.git",
-    "module-rank": "git@github.com:yldio/module-rank.git"
+    "module-rank": "git@github.com:yldio/module-rank.git",
+    "xtend": "^4.0.1"
   },
   "license": "MIT",
   "devDependencies": {

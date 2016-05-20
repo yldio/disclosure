@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 
-var async = require('async')
 var pkg = require('../package.json')
 var program = require('commander')
-var localData = require('module-data').local
-var remoteData = require('module-data').remote
-var standardizeData = require('module-data/standardize')
-var getDepsSet = require('module-data/dependencies-set')
-var moduleRank = require('module-rank')
 var path = require('path')
+var disclosure = require('../')
 var tableReporter = require('../lib/table-reporter')
 
 var reporters = {
@@ -23,26 +18,26 @@ program
   .version(pkg.version)
   .option('--reporter <reporter>', 'Beatify data with a reporter', selectReporter, 'default')
   .option('--licenses [licenses]', 'Licences whitelist separated by commas')
-  .option('--licenses-file [licensesFile]', 'Licences whitelist json')
+  .option('--licenses-file [licensesFile]', 'Licences whitelist json file')
   .arguments('<path>')
   .action(function (path) {
     pathArg = path
   })
   .parse(process.argv)
 
-localData(path.resolve(pathArg), {depth: 0}, function (err, local) {
+var licenses = program.licenses || program['licenses-files'] || false
+
+var options = {}
+if (licenses) {
+  options.licenses = licenses
+}
+
+disclosure(path.resolve(pathArg), options, function (err, data) {
   if (err) {
     return handleError(err)
   }
 
-  var depsSet = getDepsSet(local)
-  var queries = {}
-
-  Object.keys(depsSet).forEach(function (dep) {
-    queries[dep] = getData(dep, depsSet[dep][0])
-  })
-
-  return async.parallel(queries, handleRemoteData(local))
+  return console.log(reporters[program.reporter](data))
 })
 
 function selectReporter (val, def) {
@@ -58,51 +53,12 @@ function selectReporter (val, def) {
   return val
 }
 
-function handleRemoteData (local) {
-  return function (err, remote) {
-    if (err) {
-      return handleError(err)
-    }
-
-    var data = {
-      local: local,
-      remote: remote
-    }
-
-    return mergeData(data, displayData)
-  }
-}
-
 function handleError (err) {
   console.log(err.stack)
 
   process.exit(1)
 }
 
-function mergeData (data, done) {
-  return standardizeData(data, function (err, standardData) {
-    if (err) {
-      return done(err)
-    }
-
-    return moduleRank(standardData, done)
-  })
-}
-
-function displayData (err, data) {
-  if (err) {
-    return handleError(err)
-  }
-
-  console.log(reporters[program.reporter](data))
-}
-
 function defaultDisplay (data) {
   return JSON.stringify(data, null, 2)
-}
-
-function getData (mdlName, version) {
-  return function (done) {
-    remoteData(mdlName, {version: version}, done)
-  }
 }
