@@ -4,7 +4,6 @@ var standardizeData = require('module-data/standardize')
 var getDepsSet = require('module-data/dependencies-set')
 var moduleRank = require('module-rank')
 var async = require('async')
-var extend = require('xtend')
 
 module.exports = disclosure
 
@@ -16,9 +15,7 @@ function disclosure (path, options, cb) {
     options = {}
   }
 
-  options = extend(options, {depth: 0})
-
-  localData(path, options, function (err, local) {
+  localData(path, { depth: 0 }, function (err, local) {
     if (err) {
       return cb(err)
     }
@@ -30,11 +27,11 @@ function disclosure (path, options, cb) {
       queries[dep] = getData(dep, depsSet[dep][0])
     })
 
-    return async.parallel(queries, handleRemoteData(local, cb))
+    return async.parallel(queries, handleRemoteData(local, options, cb))
   })
 }
 
-function handleRemoteData (local, cb) {
+function handleRemoteData (local, options, cb) {
   return function (err, remote) {
     if (err) {
       return cb(err)
@@ -45,7 +42,7 @@ function handleRemoteData (local, cb) {
       remote: remote
     }
 
-    return mergeData(data, cb)
+    return mergeData(data, options, cb)
   }
 }
 
@@ -55,12 +52,12 @@ function getData (mdlName, version) {
   }
 }
 
-function mergeData (data, done) {
+function mergeData (data, options, done) {
   return standardizeData(data, function (err, standardData) {
     if (err) {
       return done(err)
     }
 
-    return moduleRank(standardData, done)
+    return moduleRank(standardData, options, done)
   })
 }

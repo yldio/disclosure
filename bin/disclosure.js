@@ -25,11 +25,19 @@ program
   })
   .parse(process.argv)
 
-var licenses = program.licenses || program['licenses-files'] || false
+var licenses = program.licenses || false
+
+if (licenses) {
+  licenses = licenses.split(',')
+} else {
+  if (program.licensesFile) {
+    licenses = require(path.resolve(program.licensesFile))
+  }
+}
 
 var options = {}
 if (licenses) {
-  options.licenses = licenses
+  options.licensesWhiteList = licenses
 }
 
 disclosure(path.resolve(pathArg), options, function (err, data) {
