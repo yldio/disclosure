@@ -8,7 +8,7 @@ var tableReporter = require('../lib/table-reporter')
 
 var reporters = {
   'table': tableReporter,
-  'default': defaultDisplay
+  'json': jsonDisplay
 }
 var pathArg
 
@@ -16,7 +16,7 @@ var pathArg
 // Describe program
 program
   .version(pkg.version)
-  .option('--reporter <reporter>', 'Beatify data with a reporter', selectReporter, 'default')
+  .option('--reporter <reporter>', 'Beatify data with a reporter', selectReporter, 'table')
   .option('--licenses [licenses]', 'Licences whitelist separated by commas')
   .option('--licenses-file [licensesFile]', 'Licences whitelist json file')
   .arguments('<path>')
@@ -24,6 +24,10 @@ program
     pathArg = path
   })
   .parse(process.argv)
+
+if (!pathArg) {
+  pathArg = process.cwd()
+}
 
 var licenses = program.licenses || false
 
@@ -67,6 +71,6 @@ function handleError (err) {
   process.exit(1)
 }
 
-function defaultDisplay (data) {
+function jsonDisplay (data) {
   return JSON.stringify(data, null, 2)
 }
