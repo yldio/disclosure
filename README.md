@@ -98,3 +98,38 @@ The disclosure core is two modules that you should definitely check out and thos
 
 - [`module-data`](https://github.com/yldio/module-data) - Traverse local module data and query remote module data.
 - [`module-rank`](https://github.com/yldio/module-rank) - Our rank formula using the data acquired by `module-data`
+
+## Formula breakdown
+We have three areas of concern and those are:
+
+- Security
+- Reliability
+- License
+
+Each has a weight of 1, so each represent roughly 33% of the final score.
+
+### Security
+The criteria of `Security` for public modules is:
+
+- `noVuln` - This is an array of objects that comes from [`snyk`](https://snyk.io/).
+
+For private modules, there is no criteria to evaluate.
+
+### Reliability
+The criteria of `Reliability` for public modules is:
+
+- `hasTests`
+- `isNotOutdated`
+- `isNotDeprecated` - If this is `false`, the score of this area of concern is 0.
+
+For private modules is:
+
+- `hasTests`
+
+### License
+The criteria of `License` for public and private modules is:
+
+- `hasLicense`
+- `licenseOnWhiteList`
+
+> Both need to have a score of 1 to have a positive score or else the final score of this area is 0.
