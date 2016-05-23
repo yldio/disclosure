@@ -1,7 +1,7 @@
 {
   "name": "disclosure",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Project dependencies overview",
   "main": "index.js",
   "scripts": {
     "test": ""
@@ -14,9 +14,8 @@
     "chalk": "^1.1.3",
     "cli-table2": "^0.2.0",
     "commander": "^2.9.0",
-    "module-data": "git@github.com:yldio/module-data.git",
-    "module-rank": "git@github.com:yldio/module-rank.git",
-    "xtend": "^4.0.1"
+    "module-data": "^0.1.0",
+    "module-rank": "^0.1.0"
   },
   "license": "MIT",
   "devDependencies": {
