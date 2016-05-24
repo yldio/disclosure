@@ -20,18 +20,14 @@ $ disclosure <path>
 
 ### `--reporter <reporter>`
 
-The only available reporter at the moment is `table`. More reporters should follow.
+The only available reporters at the moment are `table` and `json`. More reporters should follow.
 
-#### `table`
-```bash
-$ disclosure --reporter table .
-```
 
 #### _Can I build my own reporter?_
-Sure, `disclosure` by default outputs JSON. So you can pipe the stdout to your custom reporter.
+Sure, `disclosure` by default outputs with the `table` reporter, but if you use the `json` reporter you can pipe the stdout to your custom reporter to parse the data and beautify it.
 
 ```bash
-$ disclosure . | my-prettify-module
+$ disclosure . --reporter json | my-prettify-module
 ```
 
 ### `--licenses [licenses]`
