@@ -4,7 +4,7 @@
 ![demo](https://cloud.githubusercontent.com/assets/6867996/15430360/f663685e-1e9c-11e6-96f9-241c3a8207b4.gif)
 ## Motivation
 
-The Node.js culture is very active in creating and publishing modules for almost every imaginable need. On average, a Node.js project has a lot more dependencies than in projects with other technologies like .NET or Java. Managing those dependencies can become be overwhelming if the project has hard requirements in terms of reliability or legal. There are too many modules to approve, vetting, monitor, etc. This tool will give you an an overview of a project's dependencies, so you know what you are exposed to regarding licenses, reliability and overall risk.
+The Node.js culture is very active in creating and publishing modules for almost every imaginable need. On average, a Node.js project has a lot more dependencies than in projects with other technologies like .NET or Java. Managing those dependencies can become overwhelming if the project has hard requirements in terms of reliability or legal. There are too many modules to approve, vet, monitor, etc. This tool will give you an overview of a project's dependencies, so you know what you are exposed to regarding licenses, reliability and overall risk.
 
 ## Installation
 ```bash
@@ -35,7 +35,7 @@ $ disclosure . --reporter json | my-prettify-module
 $ disclosure . --licenses "MIT,ISC,Apache-2.0"
 ```
 
-This option let you pass a custom license whitelist instead of using the [default one](https://github.com/yldio/module-rank/blob/master/lib/licenses-whitelist.js).
+This option lets you pass a custom license whitelist instead of using the [default one](https://github.com/yldio/module-rank/blob/master/lib/licenses-whitelist.js).
 
 > Separate the licenses by comma and use only valid SPDX licenses ids.
 
@@ -102,7 +102,7 @@ We have three areas of concern and those are:
 - Reliability
 - License
 
-Each has a weight of 1, so each represent roughly 33% of the final score.
+Each has a weight of 1, so each represents roughly 33% of the final score.
 
 ### Security
 The criteria of `Security` for public modules is:
